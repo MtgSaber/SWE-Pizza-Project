@@ -1,4 +1,6 @@
-package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui;
+package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient;
+
+import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Client;
 
 /**
  * The main class for the Register Client program GUI. Must implement all abstract methods from <code>Client</code>.
@@ -8,5 +10,6 @@ package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui;
  * @since 0.0
  * @see net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Client
  */
-public class OrderScreenClient extends Client {
+public class RegisterClient extends Client {
+
 }
