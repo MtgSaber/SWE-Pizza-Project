@@ -1,0 +1,83 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fnil\fcharset0 Menlo-Bold;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 HelveticaNeue;
+}
+{\colortbl;\red255\green255\blue255;\red106\green0\blue67;\red255\green255\blue255;\red38\green38\blue38;
+\red255\green255\blue255;\red109\green109\blue109;\red0\green0\blue0;\red184\green14\blue61;\red29\green0\blue255;
+\red133\green0\blue2;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trcbpat5 \trbrdrt\brdrnil \trbrdrl\brdrnil \trbrdrt\brdrnil \trbrdrr\brdrnil 
+\clvertalt \clshdrawnil \clwWidth8000\clftsWidth3 \clbrdrt\brdrnil \clbrdrl\brdrnil \clbrdrb\brdrnil \clbrdrr\brdrnil \clpadl0 \clpadr0 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+
+\f0\b\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 import\'a0
+\f1\b0 \cf7 \strokec7 java.awt.*;\cf8 \strokec8 \
+
+\f0\b \cf2 \strokec2 import\'a0
+\f1\b0 \cf7 \strokec7 java.awt.event.*;\cf8 \strokec8 \
+\
+
+\f0\b \cf2 \strokec2 public\'a0class\'a0
+\f1\b0 \cf7 \strokec7 DataEntry\'a0\{\cf8 \strokec8 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf5 \strokec5 \'a0\'a0
+\f0\b \cf2 \strokec2 public\'a0static\'a0void\'a0
+\f1\b0 \cf7 \strokec7 main(String[]\'a0args)\'a0\{\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Frame\'a0frm=
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Frame(\cf9 \strokec9 \'93Customer Name\'a0frame"\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Label\'a0lbl\'a0=\'a0
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Label(\cf9 \strokec9 "Please\'a0fill\'a0this\'a0blank:"\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 frm.add(lbl);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 frm.setSize(\cf10 \strokec10 350\cf7 \strokec7 ,\cf10 \strokec10 200\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 frm.setVisible(
+\f0\b \cf2 \strokec2 true
+\f1\b0 \cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 frm.addWindowListener(
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 WindowAdapter()\{\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0
+\f0\b \cf2 \strokec2 public\'a0void\'a0
+\f1\b0 \cf7 \strokec7 windowClosing(WindowEvent\'a0e)\{\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 System.exit(\cf10 \strokec10 0\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 \}\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 \});\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Panel\'a0p\'a0=\'a0
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Panel();\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Panel\'a0p1\'a0=\'a0
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Panel();\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Label\'a0jFirstName\'a0=\'a0
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Label(\cf9 \strokec9 "First\'a0Name"\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 TextField\'a0lFirstName\'a0=\'a0
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 TextField(\cf10 \strokec10 20\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Label\'a0jLastName\'a0=
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Label(\cf9 \strokec9 "Last\'a0Name"\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 TextField\'a0lLastName=
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 TextField(\cf10 \strokec10 20\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.setLayout(
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 GridLayout(\cf10 \strokec10 3\cf7 \strokec7 ,\cf10 \strokec10 1\cf7 \strokec7 ));\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.add(jFirstName);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.add(lFirstName);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.add(jLastName);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.add(lLastName);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 Button\'a0Submit=
+\f0\b \cf2 \strokec2 new\'a0
+\f1\b0 \cf7 \strokec7 Button(\cf9 \strokec9 "Submit"\cf7 \strokec7 );\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p.add(Submit);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 p1.add(p);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 frm.add(p1,BorderLayout.NORTH);\cf8 \strokec8 \
+\cf5 \strokec5 \'a0\'a0\cf7 \strokec7 \}\cf8 \strokec8 \
+\pard\intbl\itap1\pardeftab720\sl300\partightenfactor0
+\cf7 \strokec7 \}
+\f2\fs28 \cf4 \strokec4 \cell \lastrow\row
+}
