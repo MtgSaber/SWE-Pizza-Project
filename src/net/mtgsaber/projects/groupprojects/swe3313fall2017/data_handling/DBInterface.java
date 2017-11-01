@@ -6,4 +6,6 @@ package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling;
  * @since 0.0
  */
 public class DBInterface {
+    private final String DB_LOC = "";
+
 }
