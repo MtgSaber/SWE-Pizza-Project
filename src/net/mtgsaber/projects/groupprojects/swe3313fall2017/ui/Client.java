@@ -13,6 +13,4 @@ import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient.Reg
  */
 public abstract class Client {
 
-
-    protected void sendOrder()
 }
