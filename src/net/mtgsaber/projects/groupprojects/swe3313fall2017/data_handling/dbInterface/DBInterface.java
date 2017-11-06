@@ -1,4 +1,4 @@
-package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling;
+package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.dbInterface;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -19,8 +19,7 @@ public class DBInterface {
     public DBInterface (String DB_LOC) {
         this.DB_LOC = DB_LOC;
         try {
-            conDB = DriverManager.getConnection("jdbc:ucanaccess://" + DB_LOC, "PizzaProgramInstance",
-                    "KrustyKrabPizza");
+            conDB = DriverManager.getConnection("jdbc:ucanaccess://" + DB_LOC);
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
@@ -45,24 +44,29 @@ public class DBInterface {
         try {
             ResultSet rs = conDB.getMetaData().getColumns(null, null, table, null);
             while (rs.next())
-                results.add(rs.getString(3));
+                results.add(rs.getString(4));
         } catch (SQLException sqlex) {
             sqlex.printStackTrace();
         }
         return results.toArray(new String[results.size()]);
     }
 
-    public String[][] getValues(String table, String... columns)
+    public String[][] getValues(String table, String[] columns)
             throws Exception {
         String[] actualColumns = getAvailableColumns(table);
+        /*
+        for (String column : actualColumns)
+            System.out.println("Asserted Column Name:\t" + column);
+        /*
         for (String column : columns)
             if (Arrays.binarySearch(actualColumns, column) < 0) throw new Exception("No such column: " + column);
+            */
         ArrayList<ArrayList<String>> results = new ArrayList<>();
         ArrayList<String> columnResults;
         ResultSet rs;
         for (String column : columns) {
             columnResults = new ArrayList<>();
-            rs = conDB.createStatement().executeQuery("Select " + column + " FROM " + table);
+            rs = conDB.createStatement().executeQuery("Select " + column.toUpperCase() + " FROM " + table);
             while (rs.next())
                 columnResults.add(rs.getString(1));
             results.add(columnResults);
@@ -78,7 +82,7 @@ public class DBInterface {
 
     }
 
-    public Boolean writeValues(String table, String[] column, String[]... values) {
+    public Boolean writeValues(String table, String[] column, String[][] values) {
 
     }
 
