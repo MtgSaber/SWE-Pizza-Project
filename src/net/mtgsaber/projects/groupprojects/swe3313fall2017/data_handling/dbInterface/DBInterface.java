@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Facilitates easy and simple manipulation of the databases used.
+ * Facilitates easy and simple manipulation of the database used.
  * @author Andrew Arnold
  * @since 0.0
  */
@@ -25,6 +25,10 @@ public class DBInterface {
         }
     }
 
+    /**
+     * scans this database for all available tables and returns them.
+     * @return Gets available tables from this database.
+     */
     public String[] getAvailableTables() {
         ArrayList<String> results = new ArrayList<>();
         try {
@@ -37,6 +41,12 @@ public class DBInterface {
         return results.toArray(new String[results.size()]);
     }
 
+    /**
+     * Returns all available columns found in the table.
+     * @param table table to analyze.
+     * @return an array of all columns in the table.
+     * @throws Exception
+     */
     public String[] getAvailableColumns(String table)
             throws Exception {
         if (!Arrays.asList(getAvailableTables()).contains(table))
@@ -52,6 +62,13 @@ public class DBInterface {
         return results.toArray(new String[results.size()]);
     }
 
+    /**
+     * returns the values form the specified columns of the table.
+     * @param table table to get the values from.
+     * @param columns columns from which to query.
+     * @return a "grid" array representation of the data from columns.
+     * @throws Exception when param conditions are not met.
+     */
     public String[][] getValues(String table, String[] columns)
             throws Exception {
         String[] actualColumns = getAvailableColumns(table);
@@ -75,7 +92,7 @@ public class DBInterface {
     }
 
     /**
-     *
+     * Creates a new row of values in the specified table.
      * @param table table name
      * @param values list of ordered values that make up the row. length must equal available columns minus 1.
      * @return success of write request
@@ -108,6 +125,13 @@ public class DBInterface {
                 " (" + valuesSelection + ")");
     }
 
+    /**
+     * Deletes a specified row from a table.
+     * @param table table from which the row will be deleted.
+     * @param rowID Primary Key of row to be deleted.
+     * @return
+     * @throws Exception whenever param conditions are not met.
+     */
     public Boolean delete(String table, Integer rowID)
             throws Exception {
         if (!Arrays.asList(getAvailableTables()).contains(table))
@@ -117,6 +141,15 @@ public class DBInterface {
         return conDB.createStatement().execute("DELETE FROM " + table + " WHERE ID = " + rowID.toString());
     }
 
+    /**
+     * Updates the indices of a row in a table to the values specified.
+     * @param table name of table whose contents are to be modified.
+     * @param rowID Primary Key of row to be modified.
+     * @param columns indices of the row to update.
+     * @param values values to be assigned to corresponding indices from <code>columns</code>. SIZE MUST EQUAL COLUMNS'.
+     * @return
+     * @throws Exception when param conditions are not met.
+     */
     public Boolean update(String table, Integer rowID, String[] columns, String[] values)
             throws Exception {
         if (values.length == 0) return false;
@@ -141,6 +174,10 @@ public class DBInterface {
                 " WHERE ID = '" + rowID.toString() + "'");
     }
 
+    /**
+     * Closes the connection to the database.
+     * @throws SQLException whenever <code>conDB.close();</code> does so.
+     */
     public void close() throws SQLException {
         conDB.close();
     }

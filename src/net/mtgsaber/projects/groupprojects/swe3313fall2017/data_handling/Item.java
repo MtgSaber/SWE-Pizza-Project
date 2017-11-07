@@ -3,6 +3,7 @@ package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling;
 import java.math.BigDecimal;
 
 /**
+ * Represents an Item from the Menu.
  * Author: Andrew Arnold (10/23/2017)
  */
 public class Item<T extends ItemCategory> {

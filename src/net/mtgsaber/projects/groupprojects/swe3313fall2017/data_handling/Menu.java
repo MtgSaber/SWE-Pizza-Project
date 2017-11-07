@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
+ * Represents the menu of all available items.
  * Author: Andrew Arnold (10/23/2017)
  */
 public class Menu {

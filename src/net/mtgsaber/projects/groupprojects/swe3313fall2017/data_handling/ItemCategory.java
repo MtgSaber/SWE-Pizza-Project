@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
+ * Sort of an Enumeration of the available Item Categories for which an Item can be typed.
  * Author: Andrew Arnold (10/23/2017)
  */
 public abstract class ItemCategory {

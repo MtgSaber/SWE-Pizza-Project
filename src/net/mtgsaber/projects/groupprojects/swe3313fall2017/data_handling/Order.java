@@ -9,12 +9,10 @@ import java.util.Arrays;
  */
 public class Order {
     private final Customer customer;
-    private final User source;
     private ArrayList<Item> items;
 
-    public Order(Customer customer, User source, Item[] items) {
+    public Order(Customer customer, Item[] items) {
         this.customer = customer;
-        this.source = source;
         this.items = new ArrayList<>(Arrays.asList(items));
     }
 
@@ -29,10 +27,6 @@ public class Order {
 
     public Customer getCustomer() {
         return customer;
-    }
-
-    public User getSource() {
-        return source;
     }
 
     public BigDecimal getPreTaxTotal() {

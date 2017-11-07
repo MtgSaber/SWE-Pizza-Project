@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * Represents a customer.
  * Author: Andrew Arnold (10/23/2017)
  */
 public class Customer {
