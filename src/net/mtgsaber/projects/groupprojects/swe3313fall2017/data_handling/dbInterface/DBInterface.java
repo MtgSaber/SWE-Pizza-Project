@@ -39,7 +39,8 @@ public class DBInterface {
 
     public String[] getAvailableColumns(String table)
             throws Exception {
-        if (Arrays.binarySearch(getAvailableTables(), table) < 0) throw new Exception("No such table: " + table);
+        if (!Arrays.asList(getAvailableTables()).contains(table))
+            throw new Exception("No such table:\t" + table);
         ArrayList<String> results = new ArrayList<>();
         try {
             ResultSet rs = conDB.getMetaData().getColumns(null, null, table, null);
@@ -54,13 +55,9 @@ public class DBInterface {
     public String[][] getValues(String table, String[] columns)
             throws Exception {
         String[] actualColumns = getAvailableColumns(table);
-        /*
-        for (String column : actualColumns)
-            System.out.println("Asserted Column Name:\t" + column);
-        /*
         for (String column : columns)
-            if (Arrays.binarySearch(actualColumns, column) < 0) throw new Exception("No such column: " + column);
-            */
+            if (!Arrays.asList(actualColumns).contains(column))
+                throw new Exception("No such column:\t" + column);
         ArrayList<ArrayList<String>> results = new ArrayList<>();
         ArrayList<String> columnResults;
         ResultSet rs;
@@ -77,17 +74,74 @@ public class DBInterface {
         return resultsPhase2.toArray(new String[resultsPhase2.size()][]);
     }
 
-    /* PENDING RESULTS FROM DBTest1
-    public Boolean writeValues(String table, String column, String[] values) {
-
+    /**
+     *
+     * @param table table name
+     * @param values list of ordered values that make up the row. length must equal available columns minus 1.
+     * @return success of write request
+     * @throws Exception If the table specified doesn't exist in this Database; If <code>values</code> doesn't
+     * conform to @param.
+     */
+    public Boolean writeValues(String table, String[] values)
+            throws Exception {
+        if (!Arrays.asList(getAvailableTables()).contains(table))
+            throw new Exception("No such table:\t" + table);
+        if (values.length != getAvailableColumns(table).length - 1)
+            throw new Exception("Invalid column count:\t" + values.length + "\n\tnumber of values must equal " +
+                    "available columns minus 1 (due to primary key column being auto-generated).");
+        StringBuilder columnSelection = new StringBuilder();
+        StringBuilder valuesSelection = new StringBuilder();
+        String[] actualColumns = getAvailableColumns(table);
+        for (int i = 1; i < actualColumns.length; i++) {
+            if (i > 1) {
+                columnSelection.append(',');
+                valuesSelection.append(',');
+            }
+            valuesSelection.append('\'');
+            columnSelection.append(actualColumns[i]);
+            valuesSelection.append(values[i-1]);
+            valuesSelection.append('\'');
+        }
+        System.out.println("Asserted columns:\t" + columnSelection.toString());
+        System.out.println("Asserted values:\t" + valuesSelection.toString());
+        return conDB.createStatement().execute("INSERT INTO " + table + "(" + columnSelection.toString() + ") VALUES" +
+                " (" + valuesSelection + ")");
     }
 
-    public Boolean writeValues(String table, String[] column, String[][] values) {
-
+    public Boolean delete(String table, Integer rowID)
+            throws Exception {
+        if (!Arrays.asList(getAvailableTables()).contains(table))
+            throw new Exception("No such table:\t" + table);
+        if (!Arrays.asList(getValues(table, new String[] {"ID"})[0]).contains(rowID.toString()))
+            throw new Exception("No such ID:\t" + rowID.toString());
+        return conDB.createStatement().execute("DELETE FROM " + table + " WHERE ID = " + rowID.toString());
     }
 
-    public Boolean close() {
+    public Boolean update(String table, Integer rowID, String[] columns, String[] values)
+            throws Exception {
+        if (values.length == 0) return false;
+        if (columns.length != values.length)
+            throw new Exception("columns list length not equal values list width:\t[" + columns.length + " != " +
+                    values.length + "]");
+        if (!Arrays.asList(getAvailableTables()).contains(table))
+            throw new Exception("No such table:\t" + table);
+        if (!Arrays.asList(getValues(table, new String[] {"ID"})[0]).contains(rowID.toString()))
+            throw new Exception("No such ID:\t" + rowID.toString());
 
+        StringBuilder assignmentsSelection = new StringBuilder();
+        for (int i = 0; i < columns.length; i++) {
+            if (i > 0) assignmentsSelection.append("\' ");
+            assignmentsSelection.append(columns[i]);
+            assignmentsSelection.append(" = \'");
+            assignmentsSelection.append(values[i]);
+            assignmentsSelection.append('\'');
+        }
+
+        return conDB.createStatement().execute("UPDATE " + table + " SET " + assignmentsSelection.toString() +
+                " WHERE ID = '" + rowID.toString() + "'");
     }
-    */
+
+    public void close() throws SQLException {
+        conDB.close();
+    }
 }
