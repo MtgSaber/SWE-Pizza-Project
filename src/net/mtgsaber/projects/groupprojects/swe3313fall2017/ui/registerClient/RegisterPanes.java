@@ -1,18 +1,18 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.Item;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.ItemCategory;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.Order;
-import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Events;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Panes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -48,6 +48,10 @@ public class RegisterPanes extends Panes {
             ));
 
             build();
+
+            hookEvents();
+
+            refresh();
         }
 
         @Override
@@ -73,7 +77,7 @@ public class RegisterPanes extends Panes {
         }
 
         @Override
-        protected void hookEvents(Events eventsDefinition) {
+        protected void hookEvents() {
 
         }
 
@@ -92,6 +96,7 @@ public class RegisterPanes extends Panes {
             final Button btOrders, btCustomers, btMenu, btLogout;
 
             HomeToolBar() {
+                super();
                 btOrders = new Button();
                 btCustomers = new Button();
                 btMenu = new Button();
@@ -106,12 +111,17 @@ public class RegisterPanes extends Panes {
                 ));
 
                 build();
+
+                hookEvents();
+
+                refresh();
             }
 
             @Override
             protected void build() {
                 super.getChildren().addAll(
                         new HBox(
+                                16,
                                 btOrders,
                                 btCustomers,
                                 btMenu,
@@ -128,7 +138,7 @@ public class RegisterPanes extends Panes {
             }
 
             @Override
-            protected void hookEvents(Events eventsDefinition) {
+            protected void hookEvents() {
 
             }
 
@@ -154,7 +164,7 @@ public class RegisterPanes extends Panes {
              * Displays all active orders. There will be a button bar at the bottom for editing, deletion,
              * completion, and view history.
              */
-            static class OrderesViewPane extends ViewPane {
+            static class OrdersViewPane extends ViewPane {
                 /**
                  * Allows the user to modify the aspects of the given order.
                  */
@@ -181,6 +191,8 @@ public class RegisterPanes extends Panes {
                         final ListView<ToppingOption> lvToppings;
                         final ChoiceBox<String> chcbxPizzaBase;
 
+                        final Item<ItemCategory.Pizza> represented;
+
                         PizzaBuilderViewPane(Item<ItemCategory.Pizza> represented) {
                             super();
 
@@ -189,7 +201,13 @@ public class RegisterPanes extends Panes {
                             btConfirm = new Button();
                             btCancel = new Button();
 
+                            this.represented = represented;
+
                             build();
+
+                            hookEvents();
+
+                            refresh();
                         }
 
                         @Override
@@ -201,21 +219,31 @@ public class RegisterPanes extends Panes {
                                             16,
                                             btConfirm,
                                             btCancel
-                                    )
+                                    ),
+                                    txtStatus
                             );
+
+                            btCancel.setText("Cancel");
+                            btConfirm.setText("Confirm");
                         }
 
                         @Override
-                        protected void hookEvents(Events eventsDefinition) {
+                        protected void hookEvents() {
 
                         }
 
                         @Override
                         protected void refresh() {
-
+                            chcbxPizzaBase.getItems().add(represented.getCategory().getBase().getName());
+                            for (Item<ItemCategory.Topping> topping : represented.getCategory().getToppings())
+                                lvToppings.getItems().add(new ToppingOption(topping, true));
                         }
                     }
 
+                    /**
+                     * A cell for a ListView. Represents the quantity of a specified beverage as a labelled
+                     * TextField, with the beverage name as the label and the quantity as the contents of the TextField.
+                     */
                     static class BeverageOption extends HBox {
                         final TextField tfQty;
                         final Text txtName;
@@ -242,46 +270,274 @@ public class RegisterPanes extends Panes {
                         }
                     }
 
-                    final ListView<Item<ItemCategory.Pizza>> pizzas;
+                    static class PizzaViewCell extends StandardPane {
+                        final Item<ItemCategory.Pizza> pizzaItem;
+                        final Text name;
+                        final Button btRemove, btEdit;
+
+                        PizzaViewCell(Item<ItemCategory.Pizza> pizzaItem) {
+                            this.pizzaItem = pizzaItem;
+                            name = new Text();
+                            btRemove = new Button();
+                            btEdit = new Button();
+
+                            super.controls.addAll(Arrays.asList(
+                                    btEdit,
+                                    btRemove
+                            ));
+
+                            build();
+
+                            hookEvents();
+
+                            refresh();
+                        }
+
+                        @Override
+                        protected void build() {
+                            super.getChildren().addAll(
+                                    new HBox(
+                                            4,
+                                            name,
+                                            btEdit,
+                                            btRemove
+                                    )
+                            );
+
+                            btEdit.setText("Edit");
+                            btRemove.setText("X");
+
+                            name.setText(pizzaItem.getName());
+                        }
+
+                        @Override
+                        protected void hookEvents() {
+
+                        }
+
+                        @Override
+                        protected void refresh() {
+
+                        }
+                    }
+
+                    final ListView<PizzaViewCell> pizzas;
                     final ListView<BeverageOption> beverages;
+                    final Button btCancel, btConfirm;
+                    final Order order;
 
                     OrderEditorViewPane(Order order) {
                         super();
                         pizzas = new ListView<>();
                         beverages = new ListView<>();
+                        btCancel = new Button();
+                        btConfirm = new Button();
+
+                        this.order = order;
+
+                        super.controls.addAll(Arrays.asList(btConfirm, btCancel));
 
                         build();
+
+                        hookEvents();
+
+                        refresh();
                     }
 
                     @Override
                     protected void build() {
+                        super.getChildren().addAll(
+                                pizzas,
+                                beverages,
+                                new HBox(
+                                        16,
+                                        btConfirm,
+                                        btCancel
+                                ),
+                                txtStatus
+                        );
 
+                        btConfirm.setText("Confirm");
+                        btCancel.setText("Cancel");
                     }
 
                     @Override
-                    protected void hookEvents(Events eventsDefinition) {
+                    protected void hookEvents() {
 
                     }
 
                     @Override
                     protected void refresh() {
+                        if (order != null)
+                            for (Item item : order.getItems()) {
+                                if (item.getCategory() instanceof ItemCategory.Pizza)
+                                    pizzas.getItems().add(new PizzaViewCell(item));
+                                if (item.getCategory() instanceof ItemCategory.Beverage)
+                                    for (BeverageOption beverageOption : beverages.getItems())
+                                        if (beverageOption.txtName.getText().equals(item.getName()))
+                                            beverageOption.tfQty.setText(
+                                                    Integer.toString(Integer.parseInt(beverageOption.tfQty.getText()) + 1)
+                                            );
+                            }
+                    }
+                }
+
+                static class OrderTile extends StandardPane {
+                    static class ItemViewCell extends Text {
+                        final Item represented;
+
+                        ItemViewCell(Item represented) {
+                            super("\t");
+                            this.represented = represented;
+
+                            if (represented.getCategory() instanceof ItemCategory.Pizza) {
+                                StringBuilder pizzaString = new StringBuilder(super.getText());
+                                pizzaString.append(represented.getName());
+                                pizzaString.append(":\n\t\t");
+                                pizzaString.append(((ItemCategory.Pizza) represented.getCategory()).getBase().getName());
+                                for (Item<ItemCategory.Topping> toppingItem : ((ItemCategory.Pizza) represented
+                                        .getCategory()).getToppings()) {
+                                    pizzaString.append("\n\t\t");
+                                    pizzaString.append(toppingItem.getName());
+                                }
+                                super.setText(pizzaString.toString());
+                            }
+
+                            if (represented.getCategory() instanceof ItemCategory.Beverage) {
+                                StringBuilder drinkString = new StringBuilder(super.getText());
+                                drinkString.append(represented.getName());
+                                super.setText(drinkString.toString());
+                            }
+                        }
+                    }
+
+                    final Text txtCustomerName, txtOrderNumber, txtLVOrders;
+                    final ListView<ItemViewCell> lvItems;
+                    final Button btEdit, btCancel, btComplete;
+                    final Order order;
+
+                    Integer number;
+
+                    OrderTile(Order order, Integer number) {
+                        this.order = order;
+                        this.txtCustomerName = new Text();
+                        this.txtOrderNumber = new Text();
+                        this.txtLVOrders = new Text();
+                        this.btEdit = new Button();
+                        this.btCancel = new Button();
+                        this.btComplete = new Button();
+                        this.lvItems = new ListView<>();
+
+                        this.number = number;
+
+                        super.controls.addAll(Arrays.asList(
+                                btCancel,
+                                btComplete,
+                                btEdit
+                        ));
+
+                        build();
+
+                        hookEvents();
+
+                        refresh();
+                    }
+
+                    @Override
+                    protected void build() {
+                        super.getChildren().addAll(
+                                txtOrderNumber,
+                                txtCustomerName,
+                                txtLVOrders,
+                                lvItems,
+                                new HBox(
+                                        4,
+                                        btComplete,
+                                        btEdit,
+                                        btCancel
+                                )
+                        );
+
+                        btComplete.setText("Done");
+                        btEdit.setText("Edit");
+                        btCancel.setText("Delete");
+                    }
+
+                    @Override
+                    protected void hookEvents() {
 
                     }
+
+                    @Override
+                    protected void refresh() {
+                        txtOrderNumber.setText("Order " + number.toString());
+                        txtCustomerName.setText(order.getCustomer().getName());
+                        txtLVOrders.setText("Items:");
+                        for (Item item : order.getItems())
+                            lvItems.getItems().add(new ItemViewCell(item));
+                    }
+                }
+
+                final ArrayList<Order> orders;
+                final TilePane tlpnOrders;
+                final Button btRefresh;
+
+                OrdersViewPane(Order[] orders) {
+                    super();
+
+                    this.orders = new ArrayList<>(Arrays.asList(orders));
+                    tlpnOrders = new TilePane();
+                    btRefresh = new Button();
+
+                    build();
+
+                    hookEvents();
+
+                    refresh();
                 }
 
                 @Override
                 protected void build() {
+                    super.getChildren().addAll(
+                            tlpnOrders,
+                            btRefresh,
+                            txtStatus
+                    );
 
+                    btRefresh.setText("Refresh");
+
+                    tlpnOrders.setPrefColumns(4);
+                    tlpnOrders.setPrefRows(2);
+                    tlpnOrders.setPrefTileHeight(360);
+                    tlpnOrders.setPrefTileWidth(240);
+
+                    tlpnOrders.setPrefHeight(
+                            tlpnOrders.getPrefRows() * tlpnOrders.getPrefTileHeight()
+                    );
+
+                    super.setPrefHeight(
+                            tlpnOrders.getPrefRows() * tlpnOrders.getPrefTileHeight()
+                            + btRefresh.getHeight()
+                            + super.getSpacing() * 2
+                            + 4
+                    );
+
+                    super.setPrefWidth(
+                            tlpnOrders.getPrefColumns() * tlpnOrders.getPrefTileWidth()
+                    );
                 }
 
                 @Override
-                protected void hookEvents(Events eventsDefinition) {
+                protected void hookEvents() {
 
                 }
 
                 @Override
                 protected void refresh() {
+                    tlpnOrders.getChildren().clear();
 
+                    for (int i = 0; i < 8 && i < orders.size(); i++)
+                        tlpnOrders.getChildren().add(new OrderTile(orders.get(i), i));
                 }
             }
 
@@ -295,7 +551,7 @@ public class RegisterPanes extends Panes {
                 }
 
                 @Override
-                protected void hookEvents(Events eventsDefinition) {
+                protected void hookEvents() {
 
                 }
 
@@ -315,7 +571,7 @@ public class RegisterPanes extends Panes {
                 }
 
                 @Override
-                protected void hookEvents(Events eventsDefinition) {
+                protected void hookEvents() {
 
                 }
 
@@ -326,19 +582,39 @@ public class RegisterPanes extends Panes {
             }
         }
 
-        @Override
-        protected void build() {
+        final HomeToolBar homeToolBar;
 
+        ViewPane viewPane;
+
+        MainPane() {
+            homeToolBar = new HomeToolBar();
+            viewPane = new ViewPane.OrdersViewPane(new Order[] {});
+
+            build();
+
+            hookEvents();
+
+            refresh();
         }
 
         @Override
-        protected void hookEvents(Events eventsDefinition) {
+        protected void build() {
+            super.getChildren().addAll(
+                    homeToolBar,
+                    viewPane,
+                    txtStatus
+            );
+        }
+
+        @Override
+        protected void hookEvents() {
 
         }
 
         @Override
         protected void refresh() {
-
+            super.getChildren().clear();
+            build();
         }
     }
 }

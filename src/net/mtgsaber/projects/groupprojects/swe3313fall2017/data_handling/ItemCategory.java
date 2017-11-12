@@ -2,6 +2,7 @@ package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Sort of an Enumeration of the available Item Categories for which an Item can be typed.
@@ -55,10 +56,10 @@ public abstract class ItemCategory {
         private final LinkedList<Item<Topping>> toppings;
         private final String name;
 
-        public Pizza(String name, Item<PizzaBase> base, Item<Topping>[] toppings) {
+        public Pizza(String name, Item<PizzaBase> base, List<Item<Topping>> toppings) {
             this.name = name;
             this.base = base;
-            this.toppings = new LinkedList<>(Arrays.asList(toppings));
+            this.toppings = new LinkedList<>(toppings);
         }
 
         @Override

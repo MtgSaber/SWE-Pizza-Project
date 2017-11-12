@@ -29,7 +29,7 @@ public abstract class Panes {
                 control.setDisable(false);
         }
         protected abstract void build();
-        protected abstract void hookEvents(Events eventsDefinition);
+        protected abstract void hookEvents();
         protected abstract void refresh();
     }
 }
