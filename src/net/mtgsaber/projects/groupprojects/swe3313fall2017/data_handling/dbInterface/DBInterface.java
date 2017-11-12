@@ -1,5 +1,7 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.dbInterface;
 
+import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.Order;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -174,11 +176,58 @@ public class DBInterface {
                 " WHERE ID = '" + rowID.toString() + "'");
     }
 
+    public String[] getRowByID(String table, Integer rowID, String[] columns)
+            throws Exception{
+        if (!Arrays.asList(getAvailableTables()).contains(table))
+            throw new Exception("No such table:\t" + table);
+        if (!Arrays.asList(getValues(table, new String[] {"ID"})[0]).contains(rowID.toString()))
+            throw new Exception("No such ID:\t" + rowID.toString());
+        String[] actualColumns = getAvailableColumns(table);
+        for (String column : columns)
+            if (!Arrays.asList(actualColumns).contains(column))
+                throw new Exception("No such column:\t" + column);
+
+        ArrayList<String> results = new ArrayList<>();
+        ArrayList<String> columnResults;
+        ResultSet rs;
+        for (String column : columns) {
+            columnResults = new ArrayList<>();
+            rs = conDB.createStatement().executeQuery("Select " + column.toUpperCase() + " FROM " + table
+                    + " WHERE ID = '" +rowID.toString() + "'");
+            while (rs.next())
+                columnResults.add(rs.getString(1));
+            results.add(columnResults.get(0));
+        }
+        return results.toArray(new String[results.size()]);
+    }
+
     /**
      * Closes the connection to the database.
      * @throws SQLException whenever <code>conDB.close();</code> does so.
      */
     public void close() throws SQLException {
         conDB.close();
+    }
+
+    public Order[] getActiveOrders() {
+        try {
+            String[][] values = getValues("PendingOrders", new String[]{"ID", "OrderID"});
+            ArrayList<Order> orders = new ArrayList<>();
+
+            for (int i = 0; i < values[0].length; i++) {
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public Order getOrderByID(Integer rowID) {
+        try {
+            String[] results = getRowByID("Orders", rowID, new String[]{"ItemIDs", "CustomerID"});
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

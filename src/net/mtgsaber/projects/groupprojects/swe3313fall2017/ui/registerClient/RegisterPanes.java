@@ -1,9 +1,9 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient;
 
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -30,6 +30,8 @@ public class RegisterPanes extends Panes {
         final Button btLogIn;
 
         LogonPane(Stage stage) {
+            super();
+
             this.stage = stage;
 
             tfUsername = new TextField();
@@ -84,6 +86,16 @@ public class RegisterPanes extends Panes {
         @Override
         protected void refresh() {
 
+        }
+
+        @Override
+        protected void lockControls() {
+            super.lockControls();
+        }
+
+        @Override
+        protected void unlockControls() {
+            super.unlockControls();
         }
     }
 
@@ -146,6 +158,16 @@ public class RegisterPanes extends Panes {
             protected void refresh() {
 
             }
+
+            @Override
+            protected void lockControls() {
+                super.lockControls();
+            }
+
+            @Override
+            protected void unlockControls() {
+                super.unlockControls();
+            }
         }
 
         /**
@@ -203,6 +225,13 @@ public class RegisterPanes extends Panes {
 
                             this.represented = represented;
 
+                            super.controls.addAll(Arrays.asList(
+                                    lvToppings,
+                                    chcbxPizzaBase,
+                                    btCancel,
+                                    btConfirm
+                            ));
+
                             build();
 
                             hookEvents();
@@ -237,6 +266,16 @@ public class RegisterPanes extends Panes {
                             chcbxPizzaBase.getItems().add(represented.getCategory().getBase().getName());
                             for (Item<ItemCategory.Topping> topping : represented.getCategory().getToppings())
                                 lvToppings.getItems().add(new ToppingOption(topping, true));
+                        }
+
+                        @Override
+                        protected void lockControls() {
+                            super.lockControls();
+                        }
+
+                        @Override
+                        protected void unlockControls() {
+                            super.unlockControls();
                         }
                     }
 
@@ -276,6 +315,8 @@ public class RegisterPanes extends Panes {
                         final Button btRemove, btEdit;
 
                         PizzaViewCell(Item<ItemCategory.Pizza> pizzaItem) {
+                            super();
+
                             this.pizzaItem = pizzaItem;
                             name = new Text();
                             btRemove = new Button();
@@ -318,6 +359,16 @@ public class RegisterPanes extends Panes {
                         @Override
                         protected void refresh() {
 
+                        }
+
+                        @Override
+                        protected void lockControls() {
+                            super.lockControls();
+                        }
+
+                        @Override
+                        protected void unlockControls() {
+                            super.unlockControls();
                         }
                     }
 
@@ -380,6 +431,16 @@ public class RegisterPanes extends Panes {
                                             );
                             }
                     }
+
+                    @Override
+                    protected void lockControls() {
+                        super.lockControls();
+                    }
+
+                    @Override
+                    protected void unlockControls() {
+                        super.unlockControls();
+                    }
                 }
 
                 static class OrderTile extends StandardPane {
@@ -419,6 +480,8 @@ public class RegisterPanes extends Panes {
                     Integer number;
 
                     OrderTile(Order order, Integer number) {
+                        super();
+
                         this.order = order;
                         this.txtCustomerName = new Text();
                         this.txtOrderNumber = new Text();
@@ -476,6 +539,16 @@ public class RegisterPanes extends Panes {
                         for (Item item : order.getItems())
                             lvItems.getItems().add(new ItemViewCell(item));
                     }
+
+                    @Override
+                    protected void lockControls() {
+                        super.lockControls();
+                    }
+
+                    @Override
+                    protected void unlockControls() {
+                        super.unlockControls();
+                    }
                 }
 
                 final ArrayList<Order> orders;
@@ -488,6 +561,10 @@ public class RegisterPanes extends Panes {
                     this.orders = new ArrayList<>(Arrays.asList(orders));
                     tlpnOrders = new TilePane();
                     btRefresh = new Button();
+
+                    super.controls.addAll(Arrays.asList(
+                            btRefresh
+                    ));
 
                     build();
 
@@ -539,6 +616,22 @@ public class RegisterPanes extends Panes {
                     for (int i = 0; i < 8 && i < orders.size(); i++)
                         tlpnOrders.getChildren().add(new OrderTile(orders.get(i), i));
                 }
+
+                @Override
+                protected void unlockControls() {
+                    super.unlockControls();
+                    for (Node node : tlpnOrders.getChildren())
+                        if (node instanceof OrderTile)
+                            ((OrderTile) node).unlockControls();
+                }
+
+                @Override
+                protected void lockControls() {
+                    super.lockControls();
+                    for (Node node : tlpnOrders.getChildren())
+                        if (node instanceof OrderTile)
+                            ((OrderTile) node).lockControls();
+                }
             }
 
             /**
@@ -558,6 +651,16 @@ public class RegisterPanes extends Panes {
                 @Override
                 protected void refresh() {
 
+                }
+
+                @Override
+                protected void lockControls() {
+                    super.lockControls();
+                }
+
+                @Override
+                protected void unlockControls() {
+                    super.unlockControls();
                 }
             }
 
@@ -579,6 +682,26 @@ public class RegisterPanes extends Panes {
                 protected void refresh() {
 
                 }
+
+                @Override
+                protected void lockControls() {
+                    super.lockControls();
+                }
+
+                @Override
+                protected void unlockControls() {
+                    super.unlockControls();
+                }
+            }
+
+            @Override
+            protected void lockControls() {
+                super.lockControls();
+            }
+
+            @Override
+            protected void unlockControls() {
+                super.unlockControls();
             }
         }
 
@@ -615,6 +738,20 @@ public class RegisterPanes extends Panes {
         protected void refresh() {
             super.getChildren().clear();
             build();
+        }
+
+        @Override
+        protected void lockControls() {
+            super.lockControls();
+            homeToolBar.lockControls();
+            viewPane.lockControls();
+        }
+
+        @Override
+        protected void unlockControls() {
+            super.unlockControls();
+            homeToolBar.unlockControls();
+            viewPane.unlockControls();
         }
     }
 }
