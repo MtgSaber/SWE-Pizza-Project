@@ -1,5 +1,7 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient;
 
+import javafx.stage.Stage;
+import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.dbInterface.DBInterface;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Client;
 
 /**
@@ -11,5 +13,11 @@ import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Client;
  * @see net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Client
  */
 public class RegisterClient extends Client {
-
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        DBInterface dbInterface = new DBInterface
+                ("D:\\Programming\\Projects\\SWE-Pizza-Project\\Database\\PizzaProjectDatabase.accdb");
+        RegisterPanes.LogonPane logonPane = new RegisterPanes.LogonPane(primaryStage, dbInterface);
+        logonPane.stage.show();
+    }
 }

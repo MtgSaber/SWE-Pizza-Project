@@ -1,6 +1,6 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui;
 
-import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.orderScreenClient.OrderScreenClient;
+import javafx.application.Application;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient.RegisterClient;
 
 /**
@@ -8,9 +8,8 @@ import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient.Reg
  * affected by differences between subclasses.
  * @author Andrew Arnold
  * @since 0.0
- * @see OrderScreenClient
  * @see RegisterClient
  */
-public abstract class Client {
+public abstract class Client extends Application {
 
 }

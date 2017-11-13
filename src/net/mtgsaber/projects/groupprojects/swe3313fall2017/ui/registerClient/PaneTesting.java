@@ -15,6 +15,7 @@ import java.util.LinkedList;
 /**
  * Author: Andrew Arnold (11/8/2017)
  */
+/*
 public class PaneTesting {
     public static class TestPaneLogon extends Application {
         @Override
@@ -139,7 +140,10 @@ public class PaneTesting {
                                         new Item<>("Small-Thin", new ItemCategory.PizzaBase(), 4.20),
                                         listToppings
                                     ),
-                                    23)
+                                    23),
+                            new RegisterPanes.MainPane.ViewPane.OrdersViewPane.OrderEditorViewPane(
+
+                            )
             );
 
             primaryStage.setScene(new Scene(pizzaBuilderViewPane));
@@ -332,3 +336,4 @@ public class PaneTesting {
         public static void main(String[] args) { launch(args); }
     }
 }
+*/

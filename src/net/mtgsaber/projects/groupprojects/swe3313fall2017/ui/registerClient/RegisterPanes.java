@@ -1,15 +1,18 @@
 package net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.registerClient;
 
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.Item;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.ItemCategory;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.Order;
+import net.mtgsaber.projects.groupprojects.swe3313fall2017.data_handling.dbInterface.DBInterface;
 import net.mtgsaber.projects.groupprojects.swe3313fall2017.ui.Panes;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.LinkedList;
  * Author: Andrew Arnold (10/18/2017)
  */
 public class RegisterPanes extends Panes {
+    final DBInterface dbInterface;
+
     /**
      * The first pane shown by the program. Logs a user on and displays the Main Pane when successful.
      */
@@ -28,11 +33,13 @@ public class RegisterPanes extends Panes {
         final TextField tfUsername, tfPassword;
         final Text txtTFUsername, txtTFPassword;
         final Button btLogIn;
+        final DBInterface dbInterface;
 
-        LogonPane(Stage stage) {
+        LogonPane(Stage stage, DBInterface dbInterface) {
             super();
 
             this.stage = stage;
+            this.dbInterface = dbInterface;
 
             tfUsername = new TextField();
             tfPassword = new TextField();
@@ -76,11 +83,16 @@ public class RegisterPanes extends Panes {
             txtTFPassword.setText("Password:\t\t");
             btLogIn.setText("Log In");
             btLogIn.setTextFill(Color.GREEN);
+
+            stage.setScene(new Scene(this));
         }
 
         @Override
         protected void hookEvents() {
-
+            btLogIn.setOnAction(event -> RegisterEvents.LogonPane_Events.actionBTLogIn(
+                    this,
+                    dbInterface
+            ));
         }
 
         @Override
@@ -106,9 +118,13 @@ public class RegisterPanes extends Panes {
     static class MainPane extends StandardPane {
         static class HomeToolBar extends StandardPane {
             final Button btOrders, btCustomers, btMenu, btLogout;
+            final MainPane mainPane;
 
-            HomeToolBar() {
+            HomeToolBar(MainPane mainPane) {
                 super();
+
+                this.mainPane = mainPane;
+
                 btOrders = new Button();
                 btCustomers = new Button();
                 btMenu = new Button();
@@ -151,7 +167,12 @@ public class RegisterPanes extends Panes {
 
             @Override
             protected void hookEvents() {
-
+                btLogout.setOnAction(event -> RegisterEvents.MainPane_Events.HomeToolBar_Events.actionBTLogout(
+                        mainPane, mainPane.dbInterface
+                ));
+                btOrders.setOnAction(event -> RegisterEvents.MainPane_Events.HomeToolBar_Events.actionBTOrders(
+                        mainPane, mainPane.dbInterface
+                ));
             }
 
             @Override
@@ -178,8 +199,11 @@ public class RegisterPanes extends Panes {
             static final Integer MAX_WIDTH = 960;
             static final Integer MAX_HEIGHT = 480;
 
-            protected ViewPane() {
+            protected MainPane mainPane;
+
+            protected ViewPane(MainPane mainPane) {
                 super();
+                this.mainPane = mainPane;
             }
 
             /**
@@ -211,12 +235,16 @@ public class RegisterPanes extends Panes {
 
                         final Button btConfirm, btCancel;
                         final ListView<ToppingOption> lvToppings;
-                        final ChoiceBox<String> chcbxPizzaBase;
+                        final ChoiceBox<Item<ItemCategory.PizzaBase>> chcbxPizzaBase;
+
+                        final OrderEditorViewPane orderEditorViewPane;
 
                         final Item<ItemCategory.Pizza> represented;
 
-                        PizzaBuilderViewPane(Item<ItemCategory.Pizza> represented) {
-                            super();
+                        PizzaBuilderViewPane(Item<ItemCategory.Pizza> represented, OrderEditorViewPane orderEditorViewPane) {
+                            super(orderEditorViewPane.ordersViewPane.mainPane);
+
+                            this.orderEditorViewPane = orderEditorViewPane;
 
                             lvToppings = new ListView<>();
                             chcbxPizzaBase = new ChoiceBox<>();
@@ -252,6 +280,18 @@ public class RegisterPanes extends Panes {
                                     txtStatus
                             );
 
+                            chcbxPizzaBase.setConverter(new StringConverter<Item<ItemCategory.PizzaBase>>() {
+                                @Override
+                                public String toString(Item<ItemCategory.PizzaBase> object) {
+                                    return object.getName();
+                                }
+
+                                @Override
+                                public Item<ItemCategory.PizzaBase> fromString(String string) {
+                                    return null;
+                                }
+                            });
+
                             btCancel.setText("Cancel");
                             btConfirm.setText("Confirm");
                         }
@@ -263,7 +303,7 @@ public class RegisterPanes extends Panes {
 
                         @Override
                         protected void refresh() {
-                            chcbxPizzaBase.getItems().add(represented.getCategory().getBase().getName());
+                            chcbxPizzaBase.getItems().add(represented.getCategory().getBase());
                             for (Item<ItemCategory.Topping> topping : represented.getCategory().getToppings())
                                 lvToppings.getItems().add(new ToppingOption(topping, true));
                         }
@@ -287,9 +327,13 @@ public class RegisterPanes extends Panes {
                         final TextField tfQty;
                         final Text txtName;
 
+                        final Item<ItemCategory.Beverage> represented;
+
                         BeverageOption(Item<ItemCategory.Beverage> represented) {
                             tfQty = new TextField();
                             txtName = new Text(represented.getName());
+
+                            this.represented = represented;
 
                             super.setSpacing(32);
                             super.getChildren().addAll(
@@ -313,9 +357,12 @@ public class RegisterPanes extends Panes {
                         final Item<ItemCategory.Pizza> pizzaItem;
                         final Text name;
                         final Button btRemove, btEdit;
+                        final OrderEditorViewPane orderEditorViewPane;
 
-                        PizzaViewCell(Item<ItemCategory.Pizza> pizzaItem) {
+                        PizzaViewCell(Item<ItemCategory.Pizza> pizzaItem, OrderEditorViewPane orderEditorViewPane) {
                             super();
+
+                            this.orderEditorViewPane = orderEditorViewPane;
 
                             this.pizzaItem = pizzaItem;
                             name = new Text();
@@ -353,7 +400,16 @@ public class RegisterPanes extends Panes {
 
                         @Override
                         protected void hookEvents() {
-
+                            btEdit.setOnAction(event -> RegisterEvents.MainPane_Events.ViewPane_Events
+                                    .OrdersViewPane_Events.OrderEditorViewPane_Events.PizzaViewCell_Events.actionBTEdit(
+                                            this,
+                                            orderEditorViewPane.mainPane.dbInterface
+                                    ));
+                            btRemove.setOnAction(event -> RegisterEvents.MainPane_Events.ViewPane_Events
+                                    .OrdersViewPane_Events.OrderEditorViewPane_Events.PizzaViewCell_Events.actionBTRemove(
+                                            this,
+                                            orderEditorViewPane.mainPane.dbInterface
+                                    ));
                         }
 
                         @Override
@@ -377,8 +433,13 @@ public class RegisterPanes extends Panes {
                     final Button btCancel, btConfirm;
                     final Order order;
 
-                    OrderEditorViewPane(Order order) {
-                        super();
+                    final OrdersViewPane ordersViewPane;
+
+                    OrderEditorViewPane(Order order, OrdersViewPane ordersViewPane) {
+                        super(ordersViewPane.mainPane);
+
+                        this.ordersViewPane = ordersViewPane;
+
                         pizzas = new ListView<>();
                         beverages = new ListView<>();
                         btCancel = new Button();
@@ -422,7 +483,7 @@ public class RegisterPanes extends Panes {
                         if (order != null)
                             for (Item item : order.getItems()) {
                                 if (item.getCategory() instanceof ItemCategory.Pizza)
-                                    pizzas.getItems().add(new PizzaViewCell(item));
+                                    pizzas.getItems().add(new PizzaViewCell(item, this));
                                 if (item.getCategory() instanceof ItemCategory.Beverage)
                                     for (BeverageOption beverageOption : beverages.getItems())
                                         if (beverageOption.txtName.getText().equals(item.getName()))
@@ -476,11 +537,14 @@ public class RegisterPanes extends Panes {
                     final ListView<ItemViewCell> lvItems;
                     final Button btEdit, btCancel, btComplete;
                     final Order order;
+                    final OrdersViewPane ordersViewPane;
 
                     Integer number;
 
-                    OrderTile(Order order, Integer number) {
+                    OrderTile(Order order, Integer number, OrdersViewPane ordersViewPane) {
                         super();
+
+                        this.ordersViewPane = ordersViewPane;
 
                         this.order = order;
                         this.txtCustomerName = new Text();
@@ -528,7 +592,17 @@ public class RegisterPanes extends Panes {
 
                     @Override
                     protected void hookEvents() {
-
+                        btEdit.setOnAction(event -> RegisterEvents.MainPane_Events.ViewPane_Events
+                                .OrdersViewPane_Events.OrderTile_Events.actionBTEdit(
+                                        this,
+                                        ordersViewPane.mainPane.dbInterface
+                                ));
+                        btComplete.setOnAction(event -> RegisterEvents.MainPane_Events.ViewPane_Events
+                                .OrdersViewPane_Events.OrderTile_Events.actionBTComplete(
+                                        this,
+                                        ordersViewPane.mainPane.dbInterface
+                                ));
+                        btCancel.setOnAction(btComplete.getOnAction());
                     }
 
                     @Override
@@ -553,14 +627,18 @@ public class RegisterPanes extends Panes {
 
                 final ArrayList<Order> orders;
                 final TilePane tlpnOrders;
-                final Button btRefresh;
+                final Button btRefresh, btNew;
+                final MainPane mainPane;
 
-                OrdersViewPane(Order[] orders) {
-                    super();
+                OrdersViewPane(Order[] orders, MainPane mainPane) {
+                    super(mainPane);
+
+                    this.mainPane = mainPane;
 
                     this.orders = new ArrayList<>(Arrays.asList(orders));
                     tlpnOrders = new TilePane();
                     btRefresh = new Button();
+                    btNew = new Button();
 
                     super.controls.addAll(Arrays.asList(
                             btRefresh
@@ -577,11 +655,16 @@ public class RegisterPanes extends Panes {
                 protected void build() {
                     super.getChildren().addAll(
                             tlpnOrders,
-                            btRefresh,
+                            new HBox(
+                                    64,
+                                    btRefresh,
+                                    btNew
+                            ),
                             txtStatus
                     );
 
                     btRefresh.setText("Refresh");
+                    btNew.setText("New");
 
                     tlpnOrders.setPrefColumns(4);
                     tlpnOrders.setPrefRows(2);
@@ -606,7 +689,10 @@ public class RegisterPanes extends Panes {
 
                 @Override
                 protected void hookEvents() {
-
+                    btNew.setOnAction(event -> RegisterEvents.MainPane_Events.ViewPane_Events.OrdersViewPane_Events.actionBTNew(
+                            this,
+                            mainPane.dbInterface
+                    ));
                 }
 
                 @Override
@@ -614,7 +700,7 @@ public class RegisterPanes extends Panes {
                     tlpnOrders.getChildren().clear();
 
                     for (int i = 0; i < 8 && i < orders.size(); i++)
-                        tlpnOrders.getChildren().add(new OrderTile(orders.get(i), i));
+                        tlpnOrders.getChildren().add(new OrderTile(orders.get(i), i, this));
                 }
 
                 @Override
@@ -634,9 +720,10 @@ public class RegisterPanes extends Panes {
                 }
             }
 
-            /**
+            /*
              * Shows all customers in the database. Only names and numbers. Allows for deletion, creation, and viewing.
              */
+            /*
             static class CustomersViewPane extends ViewPane {
                 @Override
                 protected void build() {
@@ -663,10 +750,12 @@ public class RegisterPanes extends Panes {
                     super.unlockControls();
                 }
             }
+            */
 
             /**
              * Displays the menu.
              */
+            /*
             static class MenuViewPane extends ViewPane {
                 @Override
                 protected void build() {
@@ -693,6 +782,7 @@ public class RegisterPanes extends Panes {
                     super.unlockControls();
                 }
             }
+            */
 
             @Override
             protected void lockControls() {
@@ -706,12 +796,21 @@ public class RegisterPanes extends Panes {
         }
 
         final HomeToolBar homeToolBar;
+        final Stage stage;
+
+        final DBInterface dbInterface;
+        final LogonPane logonPane;
 
         ViewPane viewPane;
 
-        MainPane() {
-            homeToolBar = new HomeToolBar();
-            viewPane = new ViewPane.OrdersViewPane(new Order[] {});
+        MainPane(Stage stage, DBInterface dbInterface, LogonPane logonPane) {
+            this.stage = stage;
+            this.dbInterface = dbInterface;
+            this.logonPane = logonPane;
+            homeToolBar = new HomeToolBar(this);
+            viewPane = new ViewPane.OrdersViewPane(new Order[] {}, this);
+
+            stage.setScene(new Scene(this));
 
             build();
 
@@ -727,6 +826,8 @@ public class RegisterPanes extends Panes {
                     viewPane,
                     txtStatus
             );
+
+
         }
 
         @Override
@@ -753,5 +854,9 @@ public class RegisterPanes extends Panes {
             homeToolBar.unlockControls();
             viewPane.unlockControls();
         }
+    }
+
+    RegisterPanes(DBInterface dbInterface) {
+        this.dbInterface = dbInterface;
     }
 }

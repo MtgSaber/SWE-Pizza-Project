@@ -25,6 +25,14 @@ public class Order {
             items.remove(index);
     }
 
+    public void removeItem(Item item) {
+        items.remove(item);
+    }
+
+    public void addItem(Item item) {
+        items.add(item);
+    }
+
     public Customer getCustomer() {
         return customer;
     }
